@@ -2,7 +2,7 @@
 # ETAPE 1 : préparation des donées et les installations necessaires
 #-------------------------------------------------------------------------------
 
-#balh blah
+#balh blah ozefzejkvbcn
 
 library(FactoMineR)
 library(factoextra)
@@ -10,7 +10,7 @@ library(ggcorrplot)
 library(EFAtools)
 
 
-#définir la première colonne (pays) comme noms de lignes
+#définir la première colonne (pays) noms de lignes
 pays_data = read.table("pays7.txt", header = TRUE, row.names = 1, dec = ".")
 
 # Afficher les dimensions et les premières lignes pour vérification
