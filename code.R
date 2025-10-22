@@ -10,9 +10,7 @@ library(ggcorrplot)
 library(EFAtools)
 
 
-# Utilisation de 'row.names=1' pour définir la première colonne (pays) comme noms de lignes
-# (comme dans l'exemple codeTP1_25.R : row.names=1)
-# Utilisation de 'dec="."' car le fichier utilise le point pour les décimales
+#définir la première colonne (pays) comme noms de lignes
 pays_data = read.table("pays7.txt", header = TRUE, row.names = 1, dec = ".")
 
 # Afficher les dimensions et les premières lignes pour vérification
