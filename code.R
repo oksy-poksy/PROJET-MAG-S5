@@ -31,7 +31,7 @@ max_vars = apply(pays7, 2, max)
 sd_vars = apply(pays7, 2, sd)
 tabCV = sd_vars / mean_vars #(CV = écart-type / moyenne)
 
-# Création d'un tableau récapitulatif
+# Création d'un tableau récapitulatif (je l'ai mis sous forme de joli tableau dans le doc)
 tableau_recap = data.frame(
   Min = round(min_vars, 2),
   Q1 = round(q1_vars, 2),
@@ -46,6 +46,9 @@ print("Tableau récapitulatif des statistiques descriptives :")
 print(tableau_recap)
 
 # -------------------- Visualisations Univariées ---------------------
+
+#COMMENTAIRE POUR ISA ET MANU: je sais pas si c'est pertinent de faire des graphiques pour chaque variable...
+# ca fait peut etre trop, mais on peut toujours enlever ce qui derange
 
 #histogrammes
 par(mfrow=c(3, 3))
@@ -71,6 +74,7 @@ points(mean(revenu), col="cyan", pch="*", cex=2)
 boxplot(espvie, main="Espérance de Vie", col="gold")
 points(mean(espvie), col="cyan", pch="*", cex=2)
 par(mfrow=c(1, 1))
+
 
 # -------------------- Visualisations Bivariées ---------------------
 matcor = cor(pays7)
