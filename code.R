@@ -117,9 +117,9 @@ ggcorrplot(matcor, hc.order = TRUE, type = "lower", lab = TRUE,
 #JUSTIFICATION DE L'ACP
 plot(pays7,main="Matrice des nuages de points")
 tabcor=cor(pays7)
-
-ggcorrplot(tabcor, method= "circle", type="lower",title = "visualisation de la matrice des correlations",
-           colors=viridis(3,option="A",direction=-1))
+help("ggcorrplot")
+ggcorrplot(tabcor, type="lower",title = "Visualisation de la matrice des correlations",
+           lab = TRUE, lab_col = "white", colors=viridis(3,option="G",direction=-1))
 
 ggplot(pays7, aes(x=fertilite,y=mortinfant)) +
   geom_jitter(size=2, col=viridis(1,option="A"), shape=1) +
