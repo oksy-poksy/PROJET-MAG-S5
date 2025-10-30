@@ -2,12 +2,12 @@
 # ETAPE 1 : préparation des donées et les installations necessaires
 #-------------------------------------------------------------------------------
 
-#library(FactoMineR)
-#library(factoextra)
-#library(ggcorrplot)
-#library(EFAtools)
-#library(viridis)
-#library(ggrepel)
+library(FactoMineR)
+library(factoextra)
+library(ggcorrplot)
+library(EFAtools)
+library(viridis)
+library(ggrepel)
 
 
 pays7 = read.table("pays7.txt", header = TRUE, row.names = 1, dec = ".") #définir la première colonne (pays) noms de lignes
@@ -119,8 +119,10 @@ ggcorrplot(matcor, hc.order = TRUE, type = "lower", lab = TRUE,
 tabcor=cor(pays7)
 
 plot(pays7,main="Matrice des nuages de points",col= viridis(3,option="G",direction=-1));
-ggcorrplot(tabcor, type ="lower",lab = TRUE, lab_col = "white", col=viridis(3,option="G",direction=-1),outline.color="white")
-help(ggcorrplot)
+
+ggcorrplot(tabcor, type ="lower",lab = TRUE, lab_col = "white", col=viridis(3,option="G",direction=-1),outline.color="white",ggtheme="theme_bw")
+
+
 ggplot(pays7, aes(x=fertilite,y=mortinfant)) +
   geom_jitter(size=2, col=viridis(1,option="A"), shape=1) +
   geom_text_repel(label=rownames(pays7))
@@ -159,6 +161,20 @@ plot(resuacp$eig[,1], type="b", main="Éboulis des valeurs propres (Ligne)",
 resuacp$var$cor
 corACP= round(resuacp$var$cor,digits=2)
 
+ggcorrplot(corACP[, 1:3], type ="full",lab = TRUE, lab_col = "white", col=viridis(3,option="G",direction=-1),outline.color="white",ggtheme="theme_bw")
+
+fviz_pca_var(resuacp, axes=c(1,2), col.var="cadetblue",
+             repel=TRUE,
+             title="Cercle des corrélations (C1, C2)",
+             col.circle = "black")
+help(fviz_pca_var)
+
+fviz_pca_var(resuacp, axes=c(1,3), col.var="cadetblue",
+             gradient.cols=viridis(10,option="G",direction=-1),
+             repel=TRUE,
+             title="Cercle des corrélations (Dim1, Dim3)",
+             col.circle = "black")
+
 #etude des contributions
 resuacp$var$contrib
 contrib=round(resuacp$var$contrib,digits=2) #seuil 100/9=11,11
@@ -174,32 +190,35 @@ resuacp$ind$dist
 
 # Qualité de représentation des variables (carrés des cosinus)
 print("Qualité de représentation des variables (cos2) :")
-cos2var = round(resuacp$var$cos2[,1:2], digits=2)
+cos2var = round(resuacp$var$cos2[,1:3], digits=2)
 print(cos2var)
-
+PCAshiny(pays7)
 
 #library(factoextra)
 
-#individus bien repr?sent?s sur C1 (cos2>0.5)
+#individus bien représentés sur C1 (cos2>0.5)
 tabcos2[tabcos2[,1]>0.5,1]
 
-#individus bien repr?sent?s sur C2 'cos2>0.25
+#individus bien représentés sur C2 (cos2>0.25)
 tabcos2[tabcos2[,2]>0.25,2]
 
-#individus bien repr?sent?s sur C3 'cos2>0.15
+#individus bien représentés sur C3 (cos2>0.15)
 tabcos2[tabcos2[,3]>0.15,3]
 
 #cercles des correlations et individus
 
 fviz_pca_var(resuacp, axes=c(1,2), col.var="cos2",
-             gradient.cols=c("skyblue","gold","coral"),
+             gradient.cols=viridis(10,option="G",direction=-1),
              repel=TRUE,
-             title="Cercle des corrélations (Dim1, Dim2)")
-
+             title="Cercle des corrélations (C1, C2)",
+             col.circle = "black",
+             fill.var = "pink")
+help(fviz_pca_var)
 fviz_pca_var(resuacp, axes=c(1,3), col.var="cos2",
-             gradient.cols=c("skyblue","gold","coral"),
+             gradient.cols=viridis(10,option="G",direction=-1),
              repel=TRUE,
-             title="Cercle des corrélations (Dim1, Dim3)")
+             title="Cercle des corrélations (Dim1, Dim3)",
+             col.circle = "black")
 
 
 # Graphique des individus sur le plan 1-2
