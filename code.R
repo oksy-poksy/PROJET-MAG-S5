@@ -9,6 +9,7 @@
 #library(viridis)
 #library(ggrepel)
 
+
 pays7 = read.table("pays7.txt", header = TRUE, row.names = 1, dec = ".") #définir la première colonne (pays) noms de lignes
 
 print("Dimensions des données :") # Afficher les dimensions
@@ -115,12 +116,11 @@ ggcorrplot(matcor, hc.order = TRUE, type = "lower", lab = TRUE,
 
 
 #JUSTIFICATION DE L'ACP
-plot(pays7,main="Matrice des nuages de points")
 tabcor=cor(pays7)
-help("ggcorrplot")
-ggcorrplot(tabcor, type="lower",title = "Visualisation de la matrice des correlations",
-           lab = TRUE, lab_col = "white", colors=viridis(3,option="G",direction=-1))
 
+plot(pays7,main="Matrice des nuages de points",col= viridis(3,option="G",direction=-1));
+ggcorrplot(tabcor, type ="lower",lab = TRUE, lab_col = "white", col=viridis(3,option="G",direction=-1),outline.color="white")
+help(ggcorrplot)
 ggplot(pays7, aes(x=fertilite,y=mortinfant)) +
   geom_jitter(size=2, col=viridis(1,option="A"), shape=1) +
   geom_text_repel(label=rownames(pays7))
