@@ -60,20 +60,43 @@ hist(importations, freq=FALSE, col="magenta4", main="Importations de biens et se
 hist(revenu, freq=FALSE, col="lightgreen", main="Revenu")
 hist(inflation, freq=FALSE, col="blue4", main="Taux d'inflation (en %)")
 hist(espvie, freq=FALSE, col="gold", main="Espérance de Vie")
-hist(fertilite, freq=FALSE, col="yellow4", main="Nombre moyen d'enfants par femme")
+hist(fertilite, freq=FALSE, col="plum", main="Nombre moyen d'enfants par femme")
 hist(pibh, freq=FALSE, col="lightcoral", main="PIB par Habitant")
 par(mfrow=c(1, 1))
 
 #boîtes à moustaches
-par(mfrow=c(2, 2))
-boxplot(mortinfant, main="Mortalité Infantile", col="skyblue")
-points(mean(mortinfant), col="cyan", pch="*", cex=2)
-boxplot(pibh, main="PIB par Habitant", col="lightcoral")
-points(mean(pibh), col="cyan", pch="*", cex=2)
-boxplot(revenu, main="Revenu", col="lightgreen")
-points(mean(revenu), col="cyan", pch="*", cex=2)
-boxplot(espvie, main="Espérance de Vie", col="gold")
-points(mean(espvie), col="cyan", pch="*", cex=2)
+par(mfrow=c(3, 3))
+
+boxplot(mortinfant, main="1. Mortalité Infantile",col="skyblue")
+points(mean(mortinfant), col="red", pch="*", cex=2)
+
+boxplot(exportations,main="2. Exportations", col="pink")
+points(mean(exportations), col="red", pch="*", cex=2)
+
+
+boxplot(sante, main="3. Dépenses de Santé", col="cornflowerblue")
+points(mean(sante), col="red", pch="*", cex=2)
+
+
+boxplot(importations, main="4. Importations", col="magenta4")
+points(mean(importations), col="red", pch="*", cex=2)
+
+
+boxplot(revenu, main="5. Revenu", col="lightgreen")
+points(mean(revenu), col="red", pch="*", cex=2)
+
+boxplot(inflation, main="6. Taux d'Inflation", col="blue4")
+points(mean(inflation), col="red", pch="*", cex=2)
+
+boxplot(espvie,main="7. Espérance de Vie", col="gold")
+points(mean(espvie), col="red", pch="*", cex=2)
+
+boxplot(fertilite, main="8. Taux de Fertilité", col="plum")
+points(mean(fertilite), col="red", pch="*", cex=2)
+
+boxplot(pibh,  main="9. PIB par Habitant", col="lightcoral")
+points(mean(pibh), col="red", pch="*", cex=2)
+
 par(mfrow=c(1, 1))
 
 
@@ -85,50 +108,78 @@ round(matcor, digits = 2)
 ggcorrplot(matcor, hc.order = TRUE, type = "lower", lab = TRUE,
            title = "Matrice des corrélations des caractéristiques des pays")
 
-#-----------------------ACP-----------------------------------------------
-attach(pays7)
+
+#-------------------------------------------------------------------------------
+# ETAPE 3 : ACP
+#-------------------------------------------------------------------------------
 
 
-#Statistique bivari?e pour justifier l'ACP`
+#JUSTIFICATION DE L'ACP
 plot(pays7,main="Matrice des nuages de points")
 tabcor=cor(pays7)
-ggcorrplot(tabcor, method= "circle", type="lower",title = "visualisation de la matrice des corr?lations",
+
+ggcorrplot(tabcor, method= "circle", type="lower",title = "visualisation de la matrice des correlations",
            colors=viridis(3,option="A",direction=-1))
+
 ggplot(pays7, aes(x=fertilite,y=mortinfant)) +
   geom_jitter(size=2, col=viridis(1,option="A"), shape=1) +
   geom_text_repel(label=rownames(pays7))
 
-# Indice KMO
-indice_KMO= KMO(tabcor)
-#ACP
-#Choisir le nombre de composantes principales en arbitrant entre les diff?- rents crit?res vus en cours,
 
-#ACP
-resuacp=PCA(pays7)
+# Indice KMO ___________________________________________________________________
+
+#library(EFAtools)
+indice_KMO = KMO(tabcor)
+print("Indice KMO global :")
+print(indice_KMO)
+
+# REALISATION DE L'ACP _________________________________________________________
+
+#library(FactoMineR)
+#Choisir le nombre de composantes principales en arbitrant entre les differents criteres vus en cours,
+
+resuacp=PCA(pays7, graph = FALSE)
 acp_data=resuacp$eig
-#choix des composantes
-barplot(acp_data[,1],main ="Graphique des valeurs propres", col="#DE3163")
-abline(a=1,b=0)
-plot(resuacp$eig[,1])
-lines(resuacp$eig[,1])
 
-#interpretation des composantes
+#CHOIX DES COMPOSTANTES (Critères graphiques) _________________________________________________________
+
+print("Valeurs propres :")
+print(acp_data)
+
+# (Critère de Kaiser et du coude)
+par(mfrow=c(1, 1))
+barplot(acp_data[,1],main ="Graphique des valeurs propres", col="#DE3163")
+abline(h=1, col="blue", lwd=2) # Ligne de référence pour Kaiser (Val. Propre = 1)
+
+plot(resuacp$eig[,1], type="b", main="Éboulis des valeurs propres (Ligne)",
+     xlab="Composante Principale", ylab="Valeur Propre", pch=19, col="#DE3163")
+
+# INTERPRETATION DES COMPOSANTES
 #etude des correlations entre composantes principales et  variables initiales
 resuacp$var$cor
 corACP= round(resuacp$var$cor,digits=2)
 
-#?tude des contributions
+#etude des contributions
 resuacp$var$contrib
-contrib=round(resuacp$var$contrib,digits=2)
-#seuil 100/9=11,11
+contrib=round(resuacp$var$contrib,digits=2) #seuil 100/9=11,11
+
 
 # -------------------------------------------------------------------------
 
+#Etape 4 : qualite de repr?sentation des pays sur les cp retenues
 
-#Etape 4 : qualit? de repr?sentation des pays sur les cp retenues
 resuacp$ind$coord #composantes principales
 tabcos2=resuacp$ind$cos2 #le tableau des cos2 des individus
 resuacp$ind$dist
+
+# Qualité de représentation des variables (carrés des cosinus)
+print("Qualité de représentation des variables (cos2) :")
+cos2var = round(resuacp$var$cos2[,1:2], digits=2)
+print(cos2var)
+
+
+#library(factoextra)
+
 #individus bien repr?sent?s sur C1 (cos2>0.5)
 tabcos2[tabcos2[,1]>0.5,1]
 
@@ -138,6 +189,38 @@ tabcos2[tabcos2[,2]>0.25,2]
 #individus bien repr?sent?s sur C3 'cos2>0.15
 tabcos2[tabcos2[,3]>0.15,3]
 
-#graphique des correlations et individus
-resuacp1=PCA(pays7,ncp=3,axes=c(1,2))
-resuacp2=PCA(pays7,ncp=3,axes=c(1,3))
+#cercles des correlations et individus
+
+fviz_pca_var(resuacp, axes=c(1,2), col.var="cos2",
+             gradient.cols=c("skyblue","gold","coral"),
+             repel=TRUE,
+             title="Cercle des corrélations (Dim1, Dim2)")
+
+fviz_pca_var(resuacp, axes=c(1,3), col.var="cos2",
+             gradient.cols=c("skyblue","gold","coral"),
+             repel=TRUE,
+             title="Cercle des corrélations (Dim1, Dim3)")
+
+
+# Graphique des individus sur le plan 1-2
+fviz_pca_ind(resuacp, axes=c(1, 2), col.ind="cos2",
+             gradient.cols=c("darkblue","gold","darkred"),
+             repel=TRUE,
+             title="Nuage de points des pays sur (C1,C2)")
+
+# Graphique des individus sur le plan 1-3
+fviz_pca_ind(resuacp, axes=c(1, 3), col.ind="cos2",
+             gradient.cols=c("darkblue","gold","darkred"),
+             repel=TRUE,
+             title="Nuage de points des pays sur (C1,C3)")
+
+# Biplot (variables et individus) sur le plan 1-2
+fviz_pca_biplot(resuacp, axes=c(1, 2), repel=TRUE,
+                col.var="red", col.ind="darkblue",
+                title="Biplot des pays et variables (C1,C2)")
+
+# Biplot (variables et individus) sur le plan 1-2
+fviz_pca_biplot(resuacp, axes=c(1, 3), repel=TRUE,
+                col.var="red", col.ind="darkblue",
+                title="Biplot des pays et variables (C1,C3)")
+
