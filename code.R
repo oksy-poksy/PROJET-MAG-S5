@@ -205,6 +205,14 @@ tabcos2[tabcos2[,2]>0.25,2]
 #individus bien représentés sur C3 (cos2>0.15)
 tabcos2[tabcos2[,3]>0.15,3]
 
+#etude des contributions
+resuacp$ind$contrib
+contrib=round(resuacp$ind$contrib,digits=2) #seuil 100/50=2
+
+contrib[contrib[,1]>2,1]
+contrib[contrib[,2]>2,2]
+contrib[contrib[,3]>2,3]
+
 #cercles des correlations et individus
 
 fviz_pca_var(resuacp, axes=c(1,2), col.var="cos2",
@@ -217,19 +225,19 @@ help(fviz_pca_var)
 fviz_pca_var(resuacp, axes=c(1,3), col.var="cos2",
              gradient.cols=viridis(10,option="G",direction=-1),
              repel=TRUE,
-             title="Cercle des corrélations (Dim1, Dim3)",
+             title="Cercle des corrélations (C1, C3)",
              col.circle = "black")
 
 
 # Graphique des individus sur le plan 1-2
 fviz_pca_ind(resuacp, axes=c(1, 2), col.ind="cos2",
-             gradient.cols=c("darkblue","gold","darkred"),
+             gradient.cols=viridis(10,option="G",direction=-1),
              repel=TRUE,
              title="Nuage de points des pays sur (C1,C2)")
 
 # Graphique des individus sur le plan 1-3
 fviz_pca_ind(resuacp, axes=c(1, 3), col.ind="cos2",
-             gradient.cols=c("darkblue","gold","darkred"),
+             gradient.cols=viridis(10,option="G",direction=-1),
              repel=TRUE,
              title="Nuage de points des pays sur (C1,C3)")
 
@@ -243,3 +251,9 @@ fviz_pca_biplot(resuacp, axes=c(1, 3), repel=TRUE,
                 col.var="red", col.ind="darkblue",
                 title="Biplot des pays et variables (C1,C3)")
 
+#interpétation des individus extrèmes
+
+pays_ext = pays7[c("Switzerland", "Netherlands","Niger","Sierra-Leone"),c("pibh","revenu", "espvie","mortinfant")]
+moy = colMeans(pays7[,c("pibh","revenu", "espvie","mortinfant")])
+pays_ext["Moyenne",]=moy
+round(pays_ext,digits=0)
